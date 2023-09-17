@@ -19,6 +19,7 @@
 
 #include "keyboard.h"
 #include "config.h"
+#include "motion_key.h"
 
 /* lazy die macro */
 #define die(...)                                                               \
@@ -135,7 +136,7 @@ static void layer_surface_closed(void *data,
 static void flip_landscape();
 
 /* event handlers */
-static const struct wl_pointer_listener pointer_listener = {
+static struct wl_pointer_listener pointer_listener = {
     .enter = wl_pointer_enter,
     .leave = wl_pointer_leave,
     .motion = wl_pointer_motion,
@@ -143,7 +144,7 @@ static const struct wl_pointer_listener pointer_listener = {
     .axis = wl_pointer_axis,
 };
 
-static const struct wl_touch_listener touch_listener = {
+static struct wl_touch_listener touch_listener = {
     .down = wl_touch_down,
     .up = wl_touch_up,
     .motion = wl_touch_motion,
@@ -991,6 +992,15 @@ main(int argc, char **argv)
                    (!strcmp(argv[i], "--list-layers"))) {
             list_layers();
             exit(0);
+        } else if ((!strcmp(argv[i], "-motion-keys")) ||
+                   (!strcmp(argv[i], "--motion-keys"))) {
+            touch_listener.up = wl_touch_up_mk;
+            touch_listener.down = wl_touch_down_mk;
+            touch_listener.motion = wl_touch_motion_mk;
+
+            pointer_listener.button = wl_pointer_button_mk;
+            pointer_listener.leave = wl_pointer_leave_mk;
+            pointer_listener.motion = wl_pointer_motion_mk;
         } else {
             fprintf(stderr, "Invalid argument: %s\n", argv[i]);
             usage(argv[0]);
