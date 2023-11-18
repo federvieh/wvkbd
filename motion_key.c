@@ -159,7 +159,7 @@ kbd_add_coord(struct point p)
         vf.y = p.y - pf.y;
         calc_vec_len(&vf);
 
-        if (vf.cached_len > MIN_LINE_LEN) {
+        if ((vf.cached_len > MIN_LINE_LEN) && (vf.cached_len > max_dist/2)) {
             dirf = calc_dir(vf);
         }
     }
