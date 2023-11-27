@@ -57,6 +57,41 @@ drw_draw_text(struct drwsurf *d, Color color, uint32_t x, uint32_t y,
 }
 
 void
+drw_do_line(struct drwsurf *d, Color color, uint32_t x1, uint32_t y1,
+            uint32_t x2, uint32_t y2)
+{
+    int x, y, w, h;
+    printf("draw_line(%p, %i, %i, %i, %i)\n", d->cairo, x1, y1, x2, y2);
+    if (x1 <= x2) {
+        x = x1;
+        w = x2 - x1;
+    } else {
+        x = x2;
+        w = x1 - x2;
+    }
+    if (y1 <= y2) {
+        y = y1;
+        h = y2 - y1;
+    } else {
+        y = y2;
+        h = y1 - y2;
+    }
+    cairo_save(d->cairo);
+
+    cairo_set_line_width(d->cairo, 1);
+    cairo_set_source_rgba(
+        d->cairo, color.bgra[2] / (double)255, color.bgra[1] / (double)255,
+        color.bgra[0] / (double)255, color.bgra[3] / (double)255);
+
+    cairo_move_to(d->cairo, x1, y1);
+    cairo_line_to(d->cairo, x2, y2);
+    cairo_stroke(d->cairo);
+
+    cairo_restore(d->cairo);
+    wl_surface_damage(d->surf, x, y, w, h);
+}
+
+void
 drw_do_clear(struct drwsurf *d, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
     cairo_save(d->cairo);

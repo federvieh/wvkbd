@@ -43,6 +43,9 @@ void drw_draw_text(struct drwsurf *d, Color color, uint32_t x, uint32_t y,
                    uint32_t w, uint32_t h, uint32_t b, const char *label,
                    PangoFontDescription *font_description);
 
+void drw_do_line(struct drwsurf *d, Color color, uint32_t x1, uint32_t y1,
+                 uint32_t x2, uint32_t y2);
+
 uint32_t setup_buffer(struct drwsurf *drwsurf);
 
 #endif

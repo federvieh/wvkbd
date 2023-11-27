@@ -327,7 +327,9 @@ kbd_unpress_key(struct kbd *kb, uint32_t time)
             kb->compose = 0;
             kbd_switch_layout(kb, kb->last_abc_layout, kb->last_abc_index);
         } else if (unlatch_shift) {
+#ifndef MOTION_KEYS
             kbd_draw_layout(kb);
+#endif
         } else {
             kbd_draw_key(kb, kb->last_press, Unpress);
         }
@@ -599,10 +601,13 @@ kbd_draw_key(struct kbd *kb, struct key *k, enum key_draw_type type)
 
     switch (type) {
     case None:
+#ifndef MOTION_KEYS
     case Unpress:
+#endif
         draw_inset(kb->surf, k->x, k->y, k->w, k->h, KBD_KEY_BORDER,
                    scheme->fg);
         break;
+#ifndef MOTION_KEYS
     case Press:
         draw_inset(kb->surf, k->x, k->y, k->w, k->h, KBD_KEY_BORDER,
                    scheme->high);
@@ -611,12 +616,14 @@ kbd_draw_key(struct kbd *kb, struct key *k, enum key_draw_type type)
         draw_over_inset(kb->surf, k->x, k->y, k->w, k->h, KBD_KEY_BORDER,
                         scheme->swipe);
         break;
+#endif
     }
 
     drw_draw_text(kb->surf, scheme->text, k->x, k->y, k->w, k->h,
                   KBD_KEY_BORDER, label, scheme->font_description);
     wl_surface_damage(kb->surf->surf, k->x, k->y, k->w, k->h);
 
+#ifndef MOTION_KEYS
     if (type == Press || type == Unpress) {
         kbd_clear_last_popup(kb);
 
@@ -635,6 +642,7 @@ kbd_draw_key(struct kbd *kb, struct key *k, enum key_draw_type type)
         wl_surface_damage(kb->popup_surf->surf, k->x, kb->last_popup_y, k->w,
                           k->h);
     }
+#endif
 
 #ifdef MOTION_KEYS
     /*

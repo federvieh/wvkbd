@@ -15,6 +15,7 @@
 #include <unistd.h>
 
 
+#include "drw.h"
 #include "keyboard.h"
 #include "motion_key.h"
 
@@ -64,6 +65,10 @@ struct vector {
  */
 static struct point p0;
 static struct point pf;
+
+#define MAX_POINTS 50
+static struct point points[MAX_POINTS];
+static int idx_p;
 
 static enum swipe_dir line_dir;
 
@@ -141,6 +146,18 @@ kbd_add_coord(struct point p)
         v.cached_len = sqrt(len_squared);
         dir = calc_dir(v);
 
+        idx_p++;
+        points[idx_p].x = p.x;
+        points[idx_p].y = p.y;
+        Color c;
+        c.bgra[0] = 85;
+        c.bgra[1] = 85;
+        c.bgra[2] = 255;
+        c.bgra[3] = 255;
+        drw_do_line(keyboard.surf, c, points[idx_p-1].x, points[idx_p-1].y, points[idx_p].x, points[idx_p].y);
+        //drw_do_line(keyboard.surf, c, p0.x, p0.y, p.x, p.y);
+
+
         if (line_dir == UNDEFINED_DIR) {
             line_dir = dir;
         }
@@ -176,6 +193,11 @@ swp_start_swp(int x, int y)
 {
     p0.x = x;
     p0.y = y;
+
+    idx_p = 0;
+    points[idx_p].x = x;
+    points[idx_p].y = y;
+
     curr_shape = UNDETERMINED_SHAPE;
     line_dir = UNDEFINED_DIR;
     max_dist = 0.0;
