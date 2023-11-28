@@ -200,6 +200,7 @@ swp_determine_shape()
     v0f.y = points[idx_pf].y - points[0].y;
     calc_vec_len(&v0f);
 
+
     /* - Determine the direction of all vectors up to pf, skipping
      *   points that are not at least MIN_LINE_LEN away from the first point.
      * - If they are all approximately the same angle, the first part is a line,
@@ -272,6 +273,35 @@ swp_determine_shape()
     enum swipe_dir dir_r = calc_dir(vfr);
     if(!is_opposite(line_dir, dir_r))
         return CIRCLE;
+    /* - Determine the distance of each point to the centroid:
+     *   If they all have (more or less) the same distance,
+     *   it's a circle. Otherwise, it's drag-return.
+     */
+    struct point c = {0, 0};
+    for (size_t i = 0; i <= idx_p; i++) {
+        c.x += points[i].x;
+        c.y += points[i].y;
+    }
+    c.x /= idx_p+1;
+    c.y /= idx_p+1;
+    int min_dist = 100000;
+    int max_dist = 0;
+
+    for (size_t i = 0; i <= idx_p; i++) {
+        int dx, dy, dist_sq;
+        dx = points[i].x - c.x;
+        dy = points[i].y - c.y;
+        dist_sq = dx * dx + dy * dy;
+        min_dist = MIN(dist_sq, min_dist);
+        max_dist = MAX(dist_sq, max_dist);
+    }
+    //printf("cx=%d, cy=%d, min=%d, max=%d\n", c.x, c.y, min_dist, max_dist);
+    if((min_dist*16)>max_dist) {
+        return CIRCLE;
+    }
+    //TODO
+
+    // TODO: Ignore the rest
 
     return BACK_FORTH;
 }
