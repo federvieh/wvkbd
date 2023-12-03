@@ -91,8 +91,6 @@ is_opposite(enum swipe_dir d1, enum swipe_dir d2)
 static void
 kbd_add_coord(struct point p)
 {
-    int dx, dy, len_squared;
-
     // Array is full 🤷
     if (idx_p >= (MAX_POINTS - 1)) {
         printf("Array is full!\n");
@@ -207,8 +205,6 @@ swp_is_circle()
 static enum kbd_shape
 swp_determine_shape()
 {
-    enum kbd_shape shape;
-
     size_t idx_pf = swp_determine_farthest_point(0);
     // - If there is no farthest point, it's a tap.
     if (!idx_pf)
