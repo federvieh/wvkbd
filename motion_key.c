@@ -1,35 +1,5 @@
-    /* Alternative approach for shape detection:
-     * - Record all points
-     * - Determine the farthest point from origin (pf)
-     * - If it's < MIN_LINE_LEN: It's a trap! I mean: It's a tap! We're done here!
-     * - Determine the direction of all vectors up to pf, skipping
-     *   points that are not at least MIN_LINE_LEN away from the first point.
-     * - If they are all approximately the same angle, the first part is a line,
-     *   otherwise it's a circle and we're done.
-     * - Of the remaining points, determine the farthest point from pf (pfr for
-     *   farthest point return).
-     * - If it's < MIN_LINE_LEN: The whole thing is a line. Determine direction
-     *   and we're done!
-     * - Determine the direction of all vectors after pf, skipping
-     *   points that are not at least MIN_LINE_LEN away from the first point.
-     * - If they are all approximately the same angle, the second part is also
-     *   a line, otherwise it's a circle and we're done.
-     * - Check if we the second line is in the opposite direction of the first
-     *   line, if yes: drag-return, if no: circle
-     */
-/*
- * To determine what the user drew use the following approach:
- * Determine the angle for all vectors that exeed the minimum length either from
- * the origin or the furthest point. If they are all within the same 45° area,
- * we have a line otherwise we have a circle. Save the lenght and position of
- * the longest distance. If the current distance is shorter than the furthest
- * distance, calc the distance between current and furthest. If that vector is
- * longer than the minimum distance and the direction is opposite to the
- * original direction we have back-forth. If the direction is sth. else, we have
- * a circle.
- */
-
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -78,19 +48,11 @@ struct vector {
     double cached_len;
 };
 
-/*
- * Based on the algorithm above, we need P0 and Pn
- */
-//static struct point p0;
-//static struct point pf;
-
 #define MAX_POINTS 100
 static struct point points[MAX_POINTS];
 static int idx_p;
 
 static enum swipe_dir line_dir;
-
-//static double max_dist;
 
 extern struct kbd keyboard;
 
@@ -158,42 +120,100 @@ calc_angle_cos(struct vector v1, struct vector v2) {
     return (v1.x * v2.x + v1.y * v2.y) / ((v1.cached_len)*(v2.cached_len));
 }
 
-    /* Alternative approach for shape detection:
-     * - Record all points
-     * - Determine the farthest point from origin (pf)
-     * - If it's < MIN_LINE_LEN: It's a trap! I mean: It's a tap! We're done here!
-     * - Determine the direction of all vectors up to pf, skipping
-     *   points that are not at least MIN_LINE_LEN away from the first point.
-     * - If they are all approximately the same angle, the first part is a line,
-     *   otherwise it's a circle and we're done.
-     * - Of the remaining points, determine the farthest point from pf (pfr for
-     *   farthest point return).
-     * - If it's < MIN_LINE_LEN: The whole thing is a line. Determine direction
-     *   and we're done!
-     * - Determine the direction of all vectors after pf, skipping
-     *   points that are not at least MIN_LINE_LEN away from the first point.
-     * - If they are all approximately the same angle, the second part is also
-     *   a line, otherwise it's a circle and we're done.
-     * - Check if we the second line is in the opposite direction of the first
-     *   line, if yes: drag-return, if no: circle
-     */
-static enum kbd_shape
-swp_determine_shape()
+static size_t
+swp_determine_farthest_point(size_t ref_idx)
 {
     int max_dist_sq = 0.0;
     size_t idx_pf = 0;
-
-    // - Determine the farthest point from origin (pf)
-    for (size_t i = 1; i <= idx_p; i++) {
-        int dist_sq = calc_dist_sq(points[0], points[i]);
+    for (size_t i = ref_idx + 1; i <= idx_p; i++) {
+        int dist_sq = calc_dist_sq(points[ref_idx], points[i]);
         if ((dist_sq > MIN_LEN_SQUARED) && (dist_sq > max_dist_sq)) {
             max_dist_sq = dist_sq;
             idx_pf = i;
         }
     }
-    // - If it's < MIN_LINE_LEN: It's a trap! I mean: It's a tap! We're done here!
+    return idx_pf;
+}
+
+static bool
+swp_is_line(struct vector ref_vec, size_t ref_idx, size_t end_idx)
+{
+    for (size_t i = ref_idx + 1; i < end_idx; i++) {
+        struct vector v0i; // vector from first point to point i
+        v0i.x = points[i].x - points[ref_idx].x;
+        v0i.y = points[i].y - points[ref_idx].y;
+        calc_vec_len(&v0i);
+        if (v0i.cached_len < MIN_LINE_LEN)
+            continue;
+
+        double v0i_v0f_cos = calc_angle_cos(v0i, ref_vec);
+        if (v0i_v0f_cos < 0.0) {
+            // not the same direction
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool
+swp_is_circle()
+{
+    struct point c = {0, 0};
+    for (size_t i = 0; i <= idx_p; i++) {
+        c.x += points[i].x;
+        c.y += points[i].y;
+    }
+    c.x /= idx_p+1;
+    c.y /= idx_p+1;
+    int min_dist_sq = 100000;
+    int max_dist_sq = 0;
+
+    for (size_t i = 0; i <= idx_p; i++) {
+        int dx, dy, dist_sq;
+        dx = points[i].x - c.x;
+        dy = points[i].y - c.y;
+        dist_sq = dx * dx + dy * dy;
+        min_dist_sq = MIN(dist_sq, min_dist_sq);
+        max_dist_sq = MAX(dist_sq, max_dist_sq);
+    }
+    // If the minimal distance is greater than 1/4 of the maximal distance, we
+    // cannot consider this a drag-with-return, it's a circle
+    return ((min_dist_sq*16)>max_dist_sq);
+}
+
+/**
+ * Approach for shape detection:
+ * - Record all points
+ * - Determine the farthest point from origin (pf)
+ * - If it's < MIN_LINE_LEN: It's a trap! I mean: It's a tap! We're done here!
+ * - Determine the direction of all vectors up to pf, skipping
+ *   points that are not at least MIN_LINE_LEN away from the first point.
+ * - If they are all approximately the same angle, the first part is a line,
+ *   otherwise it's a circle and we're done.
+ * - Of the remaining points, determine the farthest point from pf (pfr for
+ *   farthest point return).
+ * - If it's < MIN_LINE_LEN: The whole thing is a line. Determine direction
+ *   and we're done!
+ * - Determine the direction of all vectors after pf, skipping
+ *   points that are not at least MIN_LINE_LEN away from the first point.
+ * - If they are all approximately the same angle, the second part is also
+ *   a line, otherwise it's a circle and we're done.
+ * - Check if we the second line is in the opposite direction of the first
+ *   line, if no: circle
+ * - Determine the distance of each point to the centroid:
+ *   If they all have (more or less) the same distance,
+ *   it's a circle. Otherwise, it's drag-return.
+ */
+static enum kbd_shape
+swp_determine_shape()
+{
+    enum kbd_shape shape;
+
+    size_t idx_pf = swp_determine_farthest_point(0);
+    // - If there is no farthest point, it's a tap.
     if (!idx_pf)
         return TAP;
+
 
     struct vector v0f; // vector from first point to farthest point
     v0f.x = points[idx_pf].x - points[0].x;
@@ -206,36 +226,17 @@ swp_determine_shape()
      * - If they are all approximately the same angle, the first part is a line,
      *   otherwise it's a circle and we're done.
      */
-    for (size_t i = 1; i < idx_pf; i++) {
-        struct vector v0i; // vector from first point to point i
-        v0i.x = points[i].x - points[0].x;
-        v0i.y = points[i].y - points[0].y;
-        calc_vec_len(&v0i);
-        if (v0i.cached_len < MIN_LINE_LEN)
-            continue;
-
-        double v0i_v0f_cos = calc_angle_cos(v0i, v0f);
-        if (v0i_v0f_cos < 0.0) {
-            // not the same direction
-            return CIRCLE;
-        }
-    }
+    if (!swp_is_line(v0f, 0, idx_pf))
+        return CIRCLE;
 
     /* - Of the remaining points, determine the farthest point from pf (pfr for
      *   farthest point return).
      */
-    size_t idx_pfr = 0;
-    max_dist_sq = 0.0;
-    for (size_t i = idx_pf + 1; i <= idx_p; i++) {
-        int dist_sq = calc_dist_sq(points[idx_pf], points[i]);
-        if ((dist_sq > MIN_LEN_SQUARED) && (dist_sq > max_dist_sq)) {
-            max_dist_sq = dist_sq;
-            idx_pfr = i;
-        }
-    }
+    size_t idx_pfr = swp_determine_farthest_point(idx_pf);
     if (!idx_pfr) {
-        /* - If it's < MIN_LINE_LEN: The whole thing is a line. Determine direction
-         *   and we're done!
+        /*
+         * There are no valid points after the farthest point. It's a line.
+         * Determine direction and we're done!
          */
         line_dir = calc_dir(v0f);
         return LINE;
@@ -251,57 +252,23 @@ swp_determine_shape()
      * - If they are all approximately the same angle, the second part is also
      *   a line, otherwise it's a circle and we're done.
      */
-    for (size_t i = idx_pf + 1; i < idx_p; i++) {
-        struct vector vfi; // vector from first point to point i
-        vfi.x = points[i].x - points[idx_pf].x;
-        vfi.y = points[i].y - points[idx_pf].y;
-        calc_vec_len(&vfi);
-        if (vfi.cached_len < MIN_LINE_LEN)
-            continue;
-
-        double vfi_vfr_cos = calc_angle_cos(vfi, vfr);
-        if (vfi_vfr_cos < 0.0) {
-            // not the same direction
-            return CIRCLE;
-        }
-    }
+    if (!swp_is_line(vfr, idx_pf, idx_p))
+        return CIRCLE;
 
     /* - Check if we the second line is in the opposite direction of the first
-     *   line, if yes: drag-return, if no: circle
+     *   line, if no: circle
      */
     line_dir = calc_dir(v0f);
     enum swipe_dir dir_r = calc_dir(vfr);
     if(!is_opposite(line_dir, dir_r))
         return CIRCLE;
+
     /* - Determine the distance of each point to the centroid:
      *   If they all have (more or less) the same distance,
      *   it's a circle. Otherwise, it's drag-return.
      */
-    struct point c = {0, 0};
-    for (size_t i = 0; i <= idx_p; i++) {
-        c.x += points[i].x;
-        c.y += points[i].y;
-    }
-    c.x /= idx_p+1;
-    c.y /= idx_p+1;
-    int min_dist = 100000;
-    int max_dist = 0;
-
-    for (size_t i = 0; i <= idx_p; i++) {
-        int dx, dy, dist_sq;
-        dx = points[i].x - c.x;
-        dy = points[i].y - c.y;
-        dist_sq = dx * dx + dy * dy;
-        min_dist = MIN(dist_sq, min_dist);
-        max_dist = MAX(dist_sq, max_dist);
-    }
-    //printf("cx=%d, cy=%d, min=%d, max=%d\n", c.x, c.y, min_dist, max_dist);
-    if((min_dist*16)>max_dist) {
+    if (swp_is_circle())
         return CIRCLE;
-    }
-    //TODO
-
-    // TODO: Ignore the rest
 
     return BACK_FORTH;
 }
