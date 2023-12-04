@@ -61,9 +61,9 @@ struct vector {
 /*
  * Used for storing all the points during the touch/pointer motion.
  */
-#define MAX_POINTS 100
-static struct point points[MAX_POINTS];
-static int idx_p;
+#define MAX_NUM_POINTS 100
+static struct point points[MAX_NUM_POINTS];
+static int num_points;
 
 static enum swipe_dir line_dir;
 
@@ -114,20 +114,20 @@ static void
 kbd_add_coord(struct point p)
 {
     // Array is full 🤷
-    if (idx_p >= (MAX_POINTS - 1)) {
+    if (num_points >= MAX_NUM_POINTS) {
         printf("Array is full!\n");
         return;
     }
 
-    idx_p++;
-    points[idx_p].x = p.x;
-    points[idx_p].y = p.y;
+    points[num_points].x = p.x;
+    points[num_points].y = p.y;
+    num_points++;
 }
 
 static void
 swp_start_swp(int x, int y)
 {
-    idx_p = 0;
+    num_points = 1;
     points[0].x = x;
     points[0].y = y;
     alarm(1); // start timer for long taps
@@ -145,7 +145,7 @@ swp_determine_farthest_point(size_t ref_idx)
 {
     int max_dist_sq = 0.0;
     size_t idx_pf = 0;
-    for (size_t i = ref_idx + 1; i <= idx_p; i++) {
+    for (size_t i = ref_idx + 1; i < num_points; i++) {
         int dist_sq = calc_dist_sq(points[ref_idx], points[i]);
         if ((dist_sq > MIN_LEN_SQUARED) && (dist_sq > max_dist_sq)) {
             max_dist_sq = dist_sq;
@@ -179,16 +179,16 @@ static bool
 swp_is_circle()
 {
     struct point c = {0, 0};
-    for (size_t i = 0; i <= idx_p; i++) {
+    for (size_t i = 0; i < num_points; i++) {
         c.x += points[i].x;
         c.y += points[i].y;
     }
-    c.x /= idx_p+1;
-    c.y /= idx_p+1;
+    c.x /= num_points;
+    c.y /= num_points;
     int min_dist_sq = 100000;
     int max_dist_sq = 0;
 
-    for (size_t i = 0; i <= idx_p; i++) {
+    for (size_t i = 0; i < num_points; i++) {
         int dx, dy, dist_sq;
         dx = points[i].x - c.x;
         dy = points[i].y - c.y;
@@ -270,7 +270,7 @@ swp_determine_shape()
      * - If they are all approximately the same angle, the second part is also
      *   a line, otherwise it's a circle and we're done.
      */
-    if (!swp_is_line(vfr, idx_pf, idx_p))
+    if (!swp_is_line(vfr, idx_pf, num_points-1))
         return CIRCLE;
 
     /* - Check if we the second line is in the opposite direction of the first
