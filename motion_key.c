@@ -1,3 +1,20 @@
+/*
+ * For detecting motions/swipes on the keyboard, we need to determine if the
+ * user used:
+ *  - tap
+ *  - long tap
+ *  - drag
+ *  - drag-and-return
+ *  - circle
+ *
+ * The algorithm used here records all the points and determines the shape after
+ * the user releases the touch / pointer (swp_determine_shape).
+ *
+ * A notable exception is the long tap. To detect a long tap we use an one
+ * second alarm signal. We then evaluate the shape and if the shape is a tap,
+ * then the user used a long tap.
+ */
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -9,11 +26,6 @@
 
 static int cur_x = -1, cur_y = -1;
 static bool cur_press = false;
-
-#define COS_22_5_DEG 0.9238795325112867
-#define COS_67_5_DEG 0.3826834323650898
-#define COS_112_5_DEG -0.3826834323650898
-#define COS_157_5_DEG -0.9238795325112867
 
 enum kbd_shape {
     UNDETERMINED_SHAPE = 0,
@@ -35,8 +47,6 @@ enum swipe_dir {
     NORTH_WEST,
 };
 
-//static enum kbd_shape curr_shape;
-
 struct point {
     int x;
     int y;
@@ -48,6 +58,9 @@ struct vector {
     double cached_len;
 };
 
+/*
+ * Used for storing all the points during the touch/pointer motion.
+ */
 #define MAX_POINTS 100
 static struct point points[MAX_POINTS];
 static int idx_p;
@@ -64,6 +77,15 @@ calc_vec_len(struct vector *v)
 {
     v->cached_len = sqrt(v->x * v->x + v->y * v->y);
 }
+
+/*
+ * The following angles for detecting the direction of a motion. These are the
+ * thresholds for the possible 8 directions.
+ */
+#define COS_22_5_DEG 0.9238795325112867
+#define COS_67_5_DEG 0.3826834323650898
+#define COS_112_5_DEG -0.3826834323650898
+#define COS_157_5_DEG -0.9238795325112867
 
 static enum swipe_dir
 calc_dir(struct vector v)
