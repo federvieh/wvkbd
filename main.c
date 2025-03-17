@@ -68,9 +68,12 @@ static struct drwsurf draw_surf, popup_draw_surf;
 
 /* layer surface parameters */
 static uint32_t layer = ZWLR_LAYER_SHELL_V1_LAYER_OVERLAY;
-static uint32_t anchor = ZWLR_LAYER_SURFACE_V1_ANCHOR_BOTTOM |
-                         ZWLR_LAYER_SURFACE_V1_ANCHOR_LEFT |
-                         ZWLR_LAYER_SURFACE_V1_ANCHOR_RIGHT;
+static uint32_t anchor_bottom = ZWLR_LAYER_SURFACE_V1_ANCHOR_BOTTOM |
+                                ZWLR_LAYER_SURFACE_V1_ANCHOR_LEFT |
+                                ZWLR_LAYER_SURFACE_V1_ANCHOR_RIGHT;
+static uint32_t anchor_right = ZWLR_LAYER_SURFACE_V1_ANCHOR_TOP |
+                               ZWLR_LAYER_SURFACE_V1_ANCHOR_RIGHT |
+                               ZWLR_LAYER_SURFACE_V1_ANCHOR_BOTTOM;
 
 /* application state */
 static bool run_display = true;
@@ -801,8 +804,14 @@ show()
     layer_surface = zwlr_layer_shell_v1_get_layer_surface(
         layer_shell, draw_surf.surf, current_output_data, layer, namespace);
 
-    zwlr_layer_surface_v1_set_size(layer_surface, 0, height);
-    zwlr_layer_surface_v1_set_anchor(layer_surface, anchor);
+    if (keyboard.landscape) {
+        zwlr_layer_surface_v1_set_size(layer_surface, height, 0);
+        zwlr_layer_surface_v1_set_anchor(layer_surface, anchor_right);
+    }
+    else{
+        zwlr_layer_surface_v1_set_size(layer_surface, 0, height);
+        zwlr_layer_surface_v1_set_anchor(layer_surface, anchor_bottom);
+    }
     zwlr_layer_surface_v1_set_exclusive_zone(layer_surface, height);
     zwlr_layer_surface_v1_set_keyboard_interactivity(layer_surface, false);
     zwlr_layer_surface_v1_add_listener(layer_surface, &layer_surface_listener,
