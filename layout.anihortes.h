@@ -247,7 +247,6 @@ static struct key key_anihortes_emoji_5_north_west = {"👍", "👎", 1.0, Copy,
  * - layout: layout to switch to when key is pressed
  */
 static struct key keys_anihortes[] = {
-    {"", "", 70.0, Pad},
     {"a", "A", -2.0, Code, KEY_A, .scheme = 1, .shape = OneSquare,
         .north      = &key_anihortes_a_north,
         .north_east = &key_anihortes_a_north_east,
@@ -292,10 +291,8 @@ static struct key keys_anihortes[] = {
         .north_west = &key_anihortes_settings_north_west,
         .long_tap   = &key_anihortes_settings_long_tap,
     },
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"h", "H", 1.0, Code, KEY_H, .scheme = 1, .shape = OneSquare,
         .north      = &key_anihortes_h_north,
         .north_east = &key_anihortes_h_north_east,
@@ -340,10 +337,8 @@ static struct key keys_anihortes[] = {
         .north_west = &key_anihortes_navigation_north_west,
         .long_tap   = &key_anihortes_navigation_long_tap,
     },
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"t", "T", 1.0, Code, KEY_T, .scheme = 1, .shape = OneSquare,
         .north      = &key_anihortes_t_north,
         .north_east = &key_anihortes_t_north_east,
@@ -388,10 +383,8 @@ static struct key keys_anihortes[] = {
         .north_west = &key_anihortes_backspace_north_west,
         .long_tap   = &key_anihortes_backspace_long_tap,
     },
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"", "", 1.0, Code, KEY_SPACE, .scheme = 0, .shape = ThreeSquares,
         .north      = &key_anihortes_space_north,
         .north_east = &key_anihortes_space_north_east,
@@ -404,14 +397,12 @@ static struct key keys_anihortes[] = {
         .long_tap   = &key_anihortes_space_long_tap,
     },
     {"↵", "↵", -2.0, Code, KEY_ENTER, .scheme = 0, .shape = OneSquare},
-    {"", "", 30.0, Pad},
 
     /* end of layout */
     {"", "", 0.0, Last},
 };
 
 static struct key keys_numpad[] = {
-    {"", "", 70.0, Pad},
     {"1", "1", -2.0, Code, KEY_1, .scheme = 1, .shape = OneSquare,
         //.north      = &key_anihortes_a_north,
         //.north_east = &key_anihortes_a_north_east,
@@ -456,10 +447,8 @@ static struct key keys_numpad[] = {
         .north_west = &key_anihortes_settings_north_west,
         .long_tap   = &key_anihortes_settings_long_tap,
     },
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"4", "4", 1.0, Code, KEY_4, .scheme = 1, .shape = OneSquare,
         //.north      = &key_anihortes_h_north,
         .north_east = &key_anihortes_h_north_east,
@@ -504,10 +493,8 @@ static struct key keys_numpad[] = {
         .north_west = &key_anihortes_navigation_north_west,
         .long_tap   = &key_anihortes_navigation_long_tap,
     },
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"7", "7", 1.0, Code, KEY_7, .scheme = 1, .shape = OneSquare,
         .north      = &key_anihortes_t_north,
         //.north_east = &key_anihortes_t_north_east,
@@ -542,10 +529,8 @@ static struct key keys_numpad[] = {
         .long_tap   = &key_anihortes_s_long_tap,
     },
     {"⌫", "⌫", -2.0, Code, KEY_BACKSPACE, .scheme = 0, .shape = OneSquare},
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"0", "0", 1.0, Code, KEY_0, .scheme = 1, .shape = TwoSquares},
     {"", "", 1.0, Code, KEY_SPACE, .scheme = 0, .shape = OneSquare,
         .north      = &key_anihortes_space_north,
@@ -559,14 +544,12 @@ static struct key keys_numpad[] = {
         .long_tap   = &key_anihortes_space_long_tap,
     },
     {"↵", "↵", -2.0, Code, KEY_ENTER, .scheme = 0, .shape = OneSquare},
-    {"", "", 30.0, Pad},
 
     /* end of layout */
     {"", "", 0.0, Last},
 };
 
 static struct key keys_navigation[] = {
-    {"", "", 70.0, Pad},
     {"1", "1", -2.0, Code, KEY_1, 0, Super, .scheme = 0, .shape = OneSquare,
     },
     {"2", "2", -2.0, Code, KEY_2, 0, Super, .scheme = 0, .shape = OneSquare,
@@ -575,10 +558,8 @@ static struct key keys_navigation[] = {
     },
     {"☝", "☝", -2.0, BackLayer, .scheme = 1, .shape = OneSquare,
     },
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"4", "4", 1.0, Code, KEY_4, 0, Super, .scheme = 0, .shape = OneSquare,
     },
     {"5", "5", 1.0, Code, KEY_5, 0, Super, .scheme = 0, .shape = OneSquare,
@@ -596,10 +577,8 @@ static struct key keys_navigation[] = {
         .north_west = &key_anihortes_navigation_north_west,
         .long_tap   = &key_anihortes_navigation_long_tap,
     },
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"7", "7", 1.0, Code, KEY_7, 0, Super, .scheme = 0, .shape = OneSquare,
     },
     {"8", "8", 1.0, Code, KEY_8, 0, Super, .scheme = 0, .shape = OneSquare,
@@ -607,10 +586,8 @@ static struct key keys_navigation[] = {
     {"9", "9", 1.0, Code, KEY_9, 0, Super, .scheme = 0, .shape = OneSquare,
     },
     {"⌫", "⌫", -2.0, Code, KEY_BACKSPACE, .scheme = 1, .shape = OneSquare},
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"0", "0", 1.0, Code, KEY_0, 0, Super, .scheme = 0, .shape = TwoSquares},
     {"", "", 1.0, Code, KEY_SPACE, .scheme = 1, .shape = OneSquare,
         .north      = &key_anihortes_space_north,
@@ -624,14 +601,12 @@ static struct key keys_navigation[] = {
         .long_tap   = &key_anihortes_space_long_tap,
     },
     {"↵", "↵", -2.0, Code, KEY_ENTER, .scheme = 1, .shape = OneSquare},
-    {"", "", 30.0, Pad},
 
     /* end of layout */
     {"", "", 0.0, Last},
 };
 
 static struct key keys_emoji[] = {
-    {"", "", 70.0, Pad},
     {"🤗", "🤣", -2.0, Copy, 0x1f917, 0, 0x1f923, .scheme = 1, .shape = OneSquare,
         //.north      = &key_anihortes_a_north,
         //.north_east = &key_anihortes_a_north_east,
@@ -676,10 +651,8 @@ static struct key keys_emoji[] = {
         .north_west = &key_anihortes_settings_north_west,
         .long_tap   = &key_anihortes_settings_long_tap,
     },
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"❤️", "❣", 1.0, Copy, 0x2764, 0, 0x2763, .scheme = 1, .shape = OneSquare,
         //.north      = &key_anihortes_h_north,
         .north_east = &key_anihortes_h_north_east,
@@ -724,10 +697,8 @@ static struct key keys_emoji[] = {
         .north_west = &key_anihortes_navigation_north_west,
         .long_tap   = &key_anihortes_navigation_long_tap,
     },
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"😁", "😎", 1.0, Copy, 0x1f600, 0, 0x1f60e, .scheme = 1, .shape = OneSquare,
         .north      = &key_anihortes_t_north,
         //.north_east = &key_anihortes_t_north_east,
@@ -762,10 +733,8 @@ static struct key keys_emoji[] = {
         .long_tap   = &key_anihortes_s_long_tap,
     },
     {"⌫", "⌫", -2.0, Code, KEY_BACKSPACE, .scheme = 0, .shape = OneSquare},
-    {"", "", 30.0, Pad},
     {"", "", 0.0, EndRow},
 
-    {"", "", 70.0, Pad},
     {"😭", "😫", 1.0, Copy, 0x1f62d, 0, 0x1f62b, .scheme = 1, .shape = OneSquare},
     {"🙇", "🤷", 1.0, Copy, 0x1f647, 0, 0x1f937, .scheme = 1, .shape = OneSquare},
     {"", "", 1.0, Code, KEY_SPACE, .scheme = 0, .shape = OneSquare,
@@ -780,7 +749,6 @@ static struct key keys_emoji[] = {
         .long_tap   = &key_anihortes_space_long_tap,
     },
     {"↵", "↵", -2.0, Code, KEY_ENTER, .scheme = 0, .shape = OneSquare},
-    {"", "", 30.0, Pad},
 
     /* end of layout */
     {"", "", 0.0, Last},
