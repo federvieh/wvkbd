@@ -207,6 +207,28 @@ kbd_init_layout(struct layout *l, uint32_t width, uint32_t height)
 {
     uint32_t x = 0, y = 0;
     uint8_t rows = kbd_get_rows(l);
+    uint32_t x_start = 0;
+
+#ifdef MOTION_KEYS
+    // HACK for getting square keys
+    // This was introduced for landscape mode, so that we don't need to pad
+    // extra rows at the top or bottom.
+    //
+    // Nice side effect is that we can now also remove the padding "keys" from
+    // the layout.
+    //
+    // Actually, the whole enum key_shape now seems redundant.
+    if (height > width) {
+        // assume landscape and keep about one fifth space at bottom
+        y = height - width - (height / 5);
+        height = width;
+    } else {
+        // assume portrait and keep about one fifth space at right
+        x_start = width - height - (width / 5);
+        x = x_start;
+        width = height;
+    }
+#endif
 
     l->keyheight = height / rows;
 
@@ -216,7 +238,7 @@ kbd_init_layout(struct layout *l, uint32_t width, uint32_t height)
     while (k->type != Last) {
         if (k->type == EndRow) {
             y += l->keyheight;
-            x = 0;
+            x = x_start;
             rowwidth = 0.0;
             rowlength = kbd_get_row_length(k + 1, width, l->keyheight);
         } else if (k->width > 0) {
@@ -254,7 +276,7 @@ kbd_get_row_length(struct key *k_start, double width, double row_height)
     if (!n)
         return l;
 
-    w_sk = row_height * l / (width - n * row_height);
+    w_sk = 1.0;
     l += n * w_sk;
 
     k = k_start;
