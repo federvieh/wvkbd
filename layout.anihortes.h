@@ -14,6 +14,7 @@
 /* layout declarations */
 enum layout_id {
     Anihortes = 0,
+    Citvoaern,
     NumPad,
     Navigation,
     Emoji,
@@ -29,12 +30,13 @@ enum keyboard_command {
     ShowHidePrimarySecondaryKeys,
 };
 
-static struct key keys_anihortes[], keys_index[], keys_numpad[], keys_navigation[], keys_emoji[];
+static struct key keys_anihortes[], keys_citvoaern[], keys_index[], keys_numpad[], keys_navigation[], keys_emoji[];
 
 static struct layout layouts[NumLayouts] = {
     [Anihortes] = {keys_anihortes, "latin", "anihortes", true}, // second parameter is the keymap name
                                                                 // third parameter is the layout name
                                                                 // last parameter indicates if it's an alphabetical/primary layout
+    [Citvoaern] = {keys_citvoaern, "cyrillic", "citvoaern", true},
     [NumPad] = {keys_numpad, "latin", "numpad", true},
     [Navigation] = {keys_navigation, "latin", "navigation", false},
     [Emoji] = {keys_emoji, "latin", "emoji", false},
@@ -188,6 +190,34 @@ static struct key key_anihortes_backspace_west       = {"⌫", "⌫", 1.0, Code,
 static struct key key_anihortes_backspace_north_west = UNUSED_KEY;
 static struct key key_anihortes_backspace_long_tap   = UNUSED_KEY;
 
+static struct key key_citvoaern_c_south_east = {"п", "П", 1.0, Code, KEY_G, .scheme = 2};
+static struct key key_citvoaern_c_south = {"ц", "Ц", 1.0, Code, KEY_W, .scheme = 2};
+static struct key key_citvoaern_i_north = {"й", "Й", 1.0, Code, KEY_Q, .scheme = 2};
+static struct key key_citvoaern_i_south = {"к", "К", 1.0, Code, KEY_R, .scheme = 2};
+static struct key key_citvoaern_t_south_east = {"ь", "Ь", 1.0, Code, KEY_M, .scheme = 2};
+static struct key key_citvoaern_v_north = {"б", "Б", 1.0, Code, KEY_COMMA, .scheme = 2};
+static struct key key_citvoaern_v_east = {"ы", "Ы", 1.0, Code, KEY_S, .scheme = 2};
+static struct key key_citvoaern_v_south = {"ъ", "Ъ", 1.0, Code, KEY_RIGHTBRACE, .scheme = 2};
+
+static struct key key_citvoaern_o_north = {"м", "М", 1.0, Code, KEY_V, .scheme = 2};
+static struct key key_citvoaern_o_north_east = {"х", "Х", 1.0, Code, KEY_LEFTBRACE, .scheme = 2};
+static struct key key_citvoaern_o_east = {"г", "Г", 1.0, Code, KEY_U, .scheme = 2};
+static struct key key_citvoaern_o_south_east = {"ш", "Ш", 1.0, Code, KEY_I, .scheme = 2};
+static struct key key_citvoaern_o_south = {"я", "Я", 1.0, Code, KEY_Z, .scheme = 2};
+static struct key key_citvoaern_o_south_west = {"щ", "Щ", 1.0, Code, KEY_O, .scheme = 2};
+static struct key key_citvoaern_o_west = {"ж", "Ж", 1.0, Code, KEY_SEMICOLON, .scheme = 2};
+static struct key key_citvoaern_o_north_west = {"ч", "Ч", 1.0, Code, KEY_X, .scheme = 2};
+
+static struct key key_citvoaern_l_west = {"л", "Л", 1.0, Code, KEY_K, .scheme = 2};
+
+static struct key key_citvoaern_e_north = {"ё", "Ё", 1.0, Code, KEY_GRAVE, .scheme = 2};
+static struct key key_citvoaern_e_north_east = {"д", "Д", 1.0, Code, KEY_L, .scheme = 2};
+static struct key key_citvoaern_e_east = {"э", "Э", 1.0, Code, KEY_APOSTROPHE, .scheme = 2};
+
+static struct key key_citvoaern_r_north = {"у", "У", 1.0, Code, KEY_E, .scheme = 2};
+static struct key key_citvoaern_r_east = {"ю", "Ю", 1.0, Code, KEY_DOT, .scheme = 2};
+static struct key key_citvoaern_r_west = {"з", "З", 1.0, Code, KEY_P, .scheme = 2};
+static struct key key_citvoaern_n_north_west = {"ф", "Ф", 1.0, Code, KEY_A, .scheme = 2};
 // corners of top left key in emoji layout
 //static struct key key_anihortes_emoji_1_north      = {"👌", "🤨", 1.0, Copy, 0x1f44c, 0, 0x1f928, .scheme = 4};
 //static struct key key_anihortes_emoji_1_north_east = {"😴", "🤬", 1.0, Copy, 0x1f634, 0, 0x1f92c, .scheme = 4};
@@ -375,6 +405,170 @@ static struct key keys_anihortes[] = {
         .south_west = &key_anihortes_s_south_west,
         .west       = &key_anihortes_s_west,
         .north_west = &key_anihortes_s_north_west,
+        .long_tap   = &key_anihortes_s_long_tap,
+    },
+    {"⌫", "⌫", -2.0, Code, KEY_BACKSPACE, .scheme = 0, .shape = OneSquare,
+        .north      = &key_anihortes_backspace_north,
+        .north_east = &key_anihortes_backspace_north_east,
+        .east       = &key_anihortes_backspace_east,
+        .south_east = &key_anihortes_backspace_south_east,
+        .south      = &key_anihortes_backspace_south,
+        .south_west = &key_anihortes_backspace_south_west,
+        .west       = &key_anihortes_backspace_west,
+        .north_west = &key_anihortes_backspace_north_west,
+        .long_tap   = &key_anihortes_backspace_long_tap,
+    },
+    {"", "", 30.0, Pad},
+    {"", "", 0.0, EndRow},
+
+    {"", "", 70.0, Pad},
+    {"", "", 1.0, Code, KEY_SPACE, .scheme = 0, .shape = ThreeSquares,
+        .north      = &key_anihortes_space_north,
+        .north_east = &key_anihortes_space_north_east,
+        .east       = &key_anihortes_space_east,
+        .south_east = &key_anihortes_space_south_east,
+        .south      = &key_anihortes_space_south,
+        .south_west = &key_anihortes_space_south_west,
+        .west       = &key_anihortes_space_west,
+        .north_west = &key_anihortes_space_north_west,
+        .long_tap   = &key_anihortes_space_long_tap,
+    },
+    {"↵", "↵", -2.0, Code, KEY_ENTER, .scheme = 0, .shape = OneSquare},
+    {"", "", 30.0, Pad},
+
+    /* end of layout */
+    {"", "", 0.0, Last},
+};
+
+static struct key keys_citvoaern[] = {
+    {"", "", 70.0, Pad},
+    {"c", "C", -2.0, Code, KEY_C, .scheme = 1, .shape = OneSquare,
+        .north      = &key_anihortes_a_north,
+        .north_east = &key_anihortes_a_north_east,
+        .east       = &key_anihortes_a_east,
+        .south_east = &key_citvoaern_c_south_east,
+        .south      = &key_citvoaern_c_south,
+        .south_west = &key_anihortes_a_south_west,
+        .west       = &key_anihortes_a_west,
+        .north_west = &key_anihortes_a_north_west,
+        .long_tap   = &key_anihortes_a_long_tap,
+    },
+    {"и", "И", -2.0, Code, KEY_B, .scheme = 1, .shape = OneSquare,
+        .north      = &key_citvoaern_i_north,
+        .north_east = &key_anihortes_n_north_east,
+        .east       = &key_anihortes_n_east,
+        .south_east = &key_anihortes_n_south_east,
+        .south      = &key_citvoaern_i_south,
+        .south_west = &key_anihortes_n_south_west,
+        .west       = &key_anihortes_n_west,
+        .north_west = &key_anihortes_n_north_west,
+        .long_tap   = &key_anihortes_n_long_tap,
+    },
+    {"т", "Т", -2.0, Code, KEY_N, .scheme = 1, .shape = OneSquare,
+        .north      = &key_anihortes_i_north,
+        .north_east = &key_anihortes_i_north_east,
+        .east       = &key_anihortes_i_east,
+        .south_east = &key_citvoaern_t_south_east,
+        .south      = &key_anihortes_i_south,
+        .south_west = &key_anihortes_i_south_west,
+        .west       = &key_anihortes_i_west,
+        .north_west = &key_anihortes_i_north_west,
+        .long_tap   = &key_anihortes_i_long_tap,
+    },
+    {"☝", "☝", -2.0, Code, KEY_X, .scheme = 0, .shape = OneSquare, // TODO: Hide Keyboard?
+        .north      = &key_anihortes_settings_north,
+        .north_east = &key_anihortes_settings_north_east,
+        .east       = &key_anihortes_settings_east,
+        .south_east = &key_anihortes_settings_south_east,
+        .south      = &key_anihortes_settings_south,
+        .south_west = &key_anihortes_settings_south_west,
+        .west       = &key_anihortes_settings_west,
+        .north_west = &key_anihortes_settings_north_west,
+        .long_tap   = &key_anihortes_settings_long_tap,
+    },
+    {"", "", 30.0, Pad},
+    {"", "", 0.0, EndRow},
+
+    {"", "", 70.0, Pad},
+    {"в", "В", 1.0, Code, KEY_D, .scheme = 1, .shape = OneSquare,
+        .north      = &key_citvoaern_v_north,
+        .north_east = &key_anihortes_h_north_east,
+        .east       = &key_citvoaern_v_east,
+        .south_east = &key_anihortes_h_south_east,
+        .south      = &key_citvoaern_v_south,
+        .south_west = &key_anihortes_h_south_west,
+        .west       = &key_anihortes_h_west,
+        .north_west = &key_anihortes_h_north_west,
+        .long_tap   = &key_anihortes_h_long_tap,
+    },
+    {"о", "О", 1.0, Code, KEY_J, .scheme = 1, .shape = OneSquare,
+        .north      = &key_citvoaern_o_north,
+        .north_east = &key_citvoaern_o_north_east,
+        .east       = &key_citvoaern_o_east,
+        .south_east = &key_citvoaern_o_south_east,
+        .south      = &key_citvoaern_o_south,
+        .south_west = &key_citvoaern_o_south_west,
+        .west       = &key_citvoaern_o_west,
+        .north_west = &key_citvoaern_o_north_west,
+        .long_tap   = &key_anihortes_o_long_tap,
+    },
+    {"а", "А", 1.0, Code, KEY_F, .scheme = 1, .shape = OneSquare,
+        .north      = &key_anihortes_r_north,
+        .north_east = &key_anihortes_r_north_east,
+        .east       = &key_anihortes_r_east,
+        .south_east = &key_anihortes_r_south_east,
+        .south      = &key_anihortes_r_south,
+        .south_west = &key_anihortes_r_south_west,
+        .west       = &key_citvoaern_l_west,
+        .north_west = &key_anihortes_r_north_west,
+        .long_tap   = &key_anihortes_r_long_tap,
+    },
+    {"abc", "abc", -2.0, Layout, 0, &layouts[Anihortes], .scheme = 0, .shape = OneSquare,
+        .north      = &key_anihortes_navigation_north,
+        .north_east = &key_anihortes_navigation_north_east,
+        .east       = &key_anihortes_navigation_east,
+        .south_east = &key_anihortes_navigation_south_east,
+        .south      = &key_anihortes_navigation_south,
+        .south_west = &key_anihortes_navigation_south_west,
+        .west       = &key_anihortes_navigation_west,
+        .north_west = &key_anihortes_navigation_north_west,
+        .long_tap   = &key_anihortes_navigation_long_tap,
+    },
+    {"", "", 30.0, Pad},
+    {"", "", 0.0, EndRow},
+
+    {"", "", 70.0, Pad},
+    {"е", "Е", 1.0, Code, KEY_T, .scheme = 1, .shape = OneSquare,
+        .north      = &key_citvoaern_e_north,
+        .north_east = &key_citvoaern_e_north_east,
+        .east       = &key_citvoaern_e_east,
+        .south_east = &key_anihortes_t_south_east,
+        .south      = &key_anihortes_t_south,
+        .south_west = &key_anihortes_t_south_west,
+        .west       = &key_anihortes_t_west,
+        .north_west = &key_anihortes_t_north_west,
+        .long_tap   = &key_anihortes_t_long_tap,
+    },
+    {"р", "Р", 1.0, Code, KEY_H, .scheme = 1, .shape = OneSquare,
+        .north      = &key_citvoaern_r_north,
+        .north_east = &key_anihortes_e_north_east,
+        .east       = &key_citvoaern_r_east,
+        .south_east = &key_anihortes_e_south_east,
+        .south      = &key_anihortes_e_south,
+        .south_west = &key_anihortes_e_south_west,
+        .west       = &key_citvoaern_r_west,
+        .north_west = &key_anihortes_e_north_west,
+        .long_tap   = &key_anihortes_e_long_tap,
+    },
+    {"н", "Н", 1.0, Code, KEY_Y, .scheme = 1, .shape = OneSquare,
+        .north      = &key_anihortes_s_north,
+        .north_east = &key_anihortes_s_north_east,
+        .east       = &key_anihortes_s_east,
+        .south_east = &key_anihortes_s_south_east,
+        .south      = &key_anihortes_s_south,
+        .south_west = &key_anihortes_s_south_west,
+        .west       = &key_anihortes_s_west,
+        .north_west = &key_citvoaern_n_north_west,
         .long_tap   = &key_anihortes_s_long_tap,
     },
     {"⌫", "⌫", -2.0, Code, KEY_BACKSPACE, .scheme = 0, .shape = OneSquare,
@@ -788,6 +982,7 @@ static struct key keys_emoji[] = {
 
 static struct key keys_index[] = {
     {"abc", "abc", 1.0, Layout, 0, &layouts[Anihortes], .scheme = 1},
+    {"абв", "абв", 1.0, Layout, 0, &layouts[Citvoaern], .scheme = 1},
     {"123", "123", 1.0, Layout, 0, &layouts[NumPad], .scheme = 1},
     {"Nav", "Nav", 1.0, Layout, 0, &layouts[Navigation], .scheme = 1},
     {"❤️", "❤️", 1.0, Layout, 0, &layouts[Emoji], .scheme = 1},
